@@ -31,35 +31,30 @@ import io.chrisdavenport.shellfish.syntax.path.*
 
 object App extends IOApp {
 
-  private val createBookPath: IO[Path] =
-    for {
-      home <- userHome
-      dir  = home / ".shellfish"
-      path = dir / "contacts.data"
-      exists <- path.exists
-      _      <- dir.createDirectories.unlessA(exists)
-      _      <- path.createFile.unlessA(exists)
-    } yield path
+  private val createBookPath: IO[Path] = for {
+    home <- userHome
+    dir  = home / ".shellfish"
+    path = dir / "contacts.data"
+    exists <- path.exists
+    _      <- dir.createDirectories.unlessA(exists)
+    _      <- path.createFile.unlessA(exists)
+  } yield path
 
-  def run(args: List[String]): IO[ExitCode] =
-    createBookPath
-      .flatMap { bookPath =>
-        val cm  = ContactManager.impl(bookPath)
-        val cli = Cli.make(cm)
-
-        Prompt.parsePrompt(args) match {
-          case Help                    => cli.helpCommand
-          case AddContact              => cli.addCommand
-          case RemoveContact(username) => cli.removeCommand(username)
-          case SearchId(username)      => cli.searchIdCommand(username)
-          case SearchName(name)        => cli.searchNameCommand(name)
-          case SearchEmail(email)      => cli.searchEmailCommand(email)
-          case SearchNumber(number)    => cli.searchNumberCommand(number)
-          case ViewAll                 => cli.viewAllCommand
-          case UpdateContact(username, flags) =>
-            cli.updateCommand(username, flags)
-        }
-
+  def run(args: List[String]): IO[ExitCode] = createBookPath
+    .map(ContactManager(_))
+    .flatMap { cm =>
+      Prompt.parsePrompt(args) match {
+        case Help                    => Cli.helpCommand
+        case AddContact              => Cli.addCommand(cm)
+        case RemoveContact(username) => Cli.removeCommand(cm)(username)
+        case SearchId(username)      => Cli.searchIdCommand(cm)(username)
+        case SearchName(name)        => Cli.searchNameCommand(cm)(name)
+        case SearchEmail(email)      => Cli.searchEmailCommand(cm)(email)
+        case SearchNumber(number)    => Cli.searchNumberCommand(cm)(number)
+        case ViewAll                 => Cli.viewAllCommand(cm)
+        case UpdateContact(username, flags) =>
+          Cli.updateCommand(cm)(username, flags)
       }
-      .as(ExitCode.Success)
+    }
+    .as(ExitCode.Success)
 }
