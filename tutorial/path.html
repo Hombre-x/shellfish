@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="Typelevel Laika + Helium Theme" />
-  <title>Files</title>
+  <title>Using Paths</title>
   
   <meta name="author" content="Christopher Davenport"/>
   
@@ -89,16 +89,16 @@
     <li class="level1 nav-header">Introduction</li>
     <li class="level2 nav-leaf"><a href="../introduction/">First steps</a></li>
     <li class="level1 nav-header">Working with Files</li>
-    <li class="level2 active nav-leaf"><a href="#">Files</a></li>
+    <li class="level2 nav-leaf"><a href="../files/">Files</a></li>
     <li class="level1 nav-header">Files</li>
     <li class="level2 nav-leaf"><a href="../wiki/file_reading_writing.html">Reading, writing, and appending</a></li>
     <li class="level2 nav-leaf"><a href="../wiki/file_manipulation.html">Handling files and doing operations</a></li>
     <li class="level1 nav-header">Working with Processes</li>
     <li class="level2 nav-leaf"><a href="../processes/">Processes</a></li>
     <li class="level1 nav-header">Tutorial</li>
-    <li class="level2 nav-leaf"><a href="../tutorial/path.html">Using Paths</a></li>
-    <li class="level2 nav-leaf"><a href="../tutorial/reading_writing.html">Reading and writing</a></li>
-    <li class="level2 nav-leaf"><a href="../tutorial/file_handling.html">File Handling</a></li>
+    <li class="level2 active nav-leaf"><a href="#">Using Paths</a></li>
+    <li class="level2 nav-leaf"><a href="reading_writing.html">Reading and writing</a></li>
+    <li class="level2 nav-leaf"><a href="file_handling.html">File Handling</a></li>
     <li class="level1 nav-header">Examples</li>
     <li class="level2 nav-leaf"><a href="../examples/">Working with Files</a></li>
     <li class="level2 nav-leaf"><a href="../examples/solutions.html">Solutions</a></li>
@@ -110,9 +110,10 @@
 
       
 <nav id="page-nav">
-  <p class="header"><a href="#">Files</a></p>
+  <p class="header"><a href="#">Using Paths</a></p>
 
   <ul class="nav-list">
+    <li class="level1 nav-leaf"><a href="#creating-a-path">Creating a <code>Path</code></a></li>
   </ul>
 
   <p class="footer"></p>
@@ -121,8 +122,27 @@
 
       <main class="content">
 
-        <h1 id="files" class="title">Files</h1>
-        <p>Coming soon ...</p>
+        <h1 id="using-paths" class="title">Using Paths</h1>
+        <p>Shellfish is implemented with <a href="https://fs2.io/#/io">fs2-io</a>, and one of the abstraction it provides is <a href="https://www.javadoc.io/static/co.fs2/fs2-docs_3/3.8.0/fs2/io/file/Path.html"><code>Path</code></a>. It represents a path to a file or a directory.<br></p>
+        <p>You can start using <code>Path</code>s by importing the domain from the library: </p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">shellfish</span><span>.</span><span class="type-name">Path</span></code></pre>
+        
+        <h2 id="creating-a-path" class="section"><a class="anchor-link left" href="#creating-a-path"><i class="icofont-laika link">&#xef71;</i></a>Creating a <code>Path</code></h2>
+        <p>The recommended way for creating a <code>Path</code> is using the <code>apply</code> method of the companion object:<br></p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">io</span><span>.</span><span class="identifier">file</span><span>.</span><span class="type-name">Path</span><span> </span><span class="comment">// TODO: Change this to the import of the library itself
+</span><span>
+</span><span class="keyword">val</span><span> </span><span class="identifier">path</span><span> = </span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;path/to/a/file/or/directory&quot;</span><span>)
+</span><span class="comment">// path: Path = path/to/a/file/or/directory</span></code></pre>
+        <p>Once you did that, you can combine paths using some convenience methods:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">parent</span><span> = </span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;parent/dir&quot;</span><span>)
+</span><span class="comment">// parent: Path = parent/dir
+</span><span>
+</span><span class="keyword">val</span><span> </span><span class="identifier">child</span><span> = </span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;child/dir&quot;</span><span>)
+</span><span class="comment">// child: Path = child/dir
+</span><span>
+</span><span class="identifier">parent</span><span> / </span><span class="identifier">child</span><span> / </span><span class="string-literal">&quot;some/more/locations&quot;</span><span>
+</span><span class="comment">// res0: Path = parent/dir/child/dir/some/more/locations</span></code></pre>
+        <p>Note that these paths are compatible with the Java NIO paths, so you can use them interchangeably by calling the <code>toNioPath</code> value.<br></p>
 
         
 <hr class="footer-rule"/>
